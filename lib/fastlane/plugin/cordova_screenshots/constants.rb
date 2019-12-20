@@ -7,5 +7,6 @@ module Fastlane
     CORDOVA_SCREENSHOTS_IOS_BUILD_PATH = "platforms/ios"
     CORDOVA_SCREENSHOTS_DEFAULT_IOS_VERSION = "9.0"
     CORDOVA_SCREENSHOTS_DEFAULT_IOS_UNIT_TEST_NAME = "ui-snapshots" # TODO: scheme_name vs. test_name
+    CORDOVA_SCREENSHOTS_DEFAULT_SWIFT_VERSION = "4.2"
   end
 end

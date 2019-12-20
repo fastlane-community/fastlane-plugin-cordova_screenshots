@@ -15,6 +15,7 @@ module Fastlane
         team_id = params[:team_id]
         bundle_id = params[:bundle_id]
         target_os = params[:min_target_ios]
+        swift_version = params[:swift_version]
 
         File.exist?(xcode_project_path) || UI.user_error!("Xcode project '#{xcode_project_path}' does not exist!")
 
@@ -33,13 +34,13 @@ module Fastlane
         #
         schemes.each do |scheme_path|
           UI.message("Processing scheme: #{scheme_path}...")
-          generate_xcode_unit_test(scheme_path, xcode_project_path, team_id, bundle_id, target_os)
+          generate_xcode_unit_test(scheme_path, xcode_project_path, team_id, bundle_id, target_os, swift_version)
         end
 
         UI.success("Done. You can now run `fastlane snapshot` to take screenshots.")
       end
 
-      def self.generate_xcode_unit_test(config_folder, xcode_project_path, team_id, bundle_id, target_os)
+      def self.generate_xcode_unit_test(config_folder, xcode_project_path, team_id, bundle_id, target_os, swift_version)
         #
         # Names and Folders
         #
@@ -64,7 +65,7 @@ module Fastlane
         #
         # Add new Unit Tests to Xcode projects
         #
-        proj = add_unit_tests_to_xcode_project(proj, scheme_name, config_folder, project_name, target_os, team_id, bundle_id, xcode_project_path)
+        proj = add_unit_tests_to_xcode_project(proj, scheme_name, config_folder, project_name, target_os, team_id, bundle_id, xcode_project_path, swift_version)
 
         #
         # Success
@@ -116,7 +117,7 @@ module Fastlane
         proj
       end
 
-      def self.add_unit_tests_to_xcode_project(proj, scheme_name, config_folder, project_name, target_os, team_id, bundle_id, xcode_project_path)
+      def self.add_unit_tests_to_xcode_project(proj, scheme_name, config_folder, project_name, target_os, team_id, bundle_id, xcode_project_path, swift_version)
         #
         # Create new test group
         #
@@ -189,7 +190,7 @@ module Fastlane
         end
 
         target.build_configuration_list.set_setting('INFOPLIST_FILE', File.absolute_path("#{config_folder}/Info.plist"))
-        target.build_configuration_list.set_setting('SWIFT_VERSION', '3.0')
+        target.build_configuration_list.set_setting('SWIFT_VERSION', swift_version)
         target.build_configuration_list.set_setting('PRODUCT_NAME', "$(TARGET_NAME)")
         target.build_configuration_list.set_setting('TEST_TARGET_NAME', project_name)
         target.build_configuration_list.set_setting('PRODUCT_BUNDLE_IDENTIFIER', "#{bundle_id}.#{scheme_name}")
@@ -258,6 +259,11 @@ module Fastlane
                                        env_name: 'CORDOVA_SCREENSHOTS_BUNDLE_ID',
                                        description: 'The Bundle ID of the iOS App, eg: ie.littlevista.whateverapp',
                                        default_value: CredentialsManager::AppfileConfig.try_fetch_value(:package_name),
+                                       optional: false),
+          FastlaneCore::ConfigItem.new(key: :swift_version,
+                                       env_name: 'CORDOVA_SCREENSHOTS_SWIFT_VERSION',
+                                       description: 'Swift Version to target',
+                                       default_value: CordovaScreenshots::CORDOVA_SCREENSHOTS_DEFAULT_SWIFT_VERSION,
                                        optional: false)
 
         ]

@@ -44,6 +44,7 @@ The action has multiple options:
 - `bundle_id` is set automatically if the `package_name` parameter is set in your fastlane `Appfile`.
 - `ios_xcode_path` specifies which Xcode project to use. By default it attempts to pick the Xcode project from the `platforms/ios` folder.
 - `min_target_ios` defines the minimum iOS version
+- `swift_version` the Swift version to target for the ui test build, defaults to '4.2'
 
 All these parameters can be overridden by specifying them in the call to the action.
 
